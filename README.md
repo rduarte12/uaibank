@@ -1,19 +1,23 @@
 # UaiBank 💰
 
-UaiBank é um sistema bancário simples feito em linguagem C, que permite gerenciar usuários, realizar transferências entre contas e armazenar dados em arquivo.
+**UaiBank** é um sistema bancário simples, escrito em linguagem C, que permite gerenciar usuários, realizar transferências entre contas e armazenar dados de forma persistente em arquivo.
+
+---
 
 ## 📋 Funcionalidades
 
-- Cadastro de um ou mais usuários
-- Busca de usuário por ID
-- Transferência de saldo entre usuários
-- Remoção de usuários por ID
-- Listagem de todos os usuários
-- Armazenamento persistente em `dados.txt`
+- ✅ Cadastro de um ou mais usuários  
+- 🔍 Busca de usuário por ID  
+- 🔄 Transferência de saldo entre contas  
+- ❌ Remoção de usuários por ID  
+- 📄 Listagem de todos os usuários  
+- 💾 Armazenamento persistente no arquivo `dados.txt`  
+
+---
 
 ## 📦 Estrutura de Dados
 
-Os usuários são armazenados em uma estrutura `struct` chamada `Usuarios` com os seguintes campos:
+Os usuários são representados por uma `struct` chamada `Usuarios`, contendo os seguintes campos:
 
 ```c
 typedef struct {
@@ -24,9 +28,11 @@ typedef struct {
 } Usuarios;
 ```
 
-## 🔧 Como compilar e executar
+---
 
-1. Compile o programa com `gcc`:
+## 🔧 Compilação e Execução
+
+1. Compile o código com o `gcc`:
    ```bash
    gcc -o uaibank uaibank.c
    ```
@@ -36,62 +42,67 @@ typedef struct {
    ./uaibank
    ```
 
-> Certifique-se de estar na mesma pasta do arquivo `dados.txt`, ou o programa criará um novo.
+> O programa criará um arquivo `dados.txt` na pasta atual, se ele ainda não existir.
+
+---
 
 ## 🧪 Exemplo de uso
 
 ```text
-==================================
-======Bem-vindo ao UaiBank!=======
-==================================
-
-
-1 - Isnserir usuario
+======== UaiBank ========
+1 - Inserir usuario
 2 - Inserir varios usuarios
 3 - Buscar usuario por ID
 4 - Realizar transferencia
 5 - Remover usuario por ID
 6 - Listar usuarios
 0 - Sair
-
-==================================
-
-
+=========================
 Escolha uma opcao: 1
 Digite o nome: João Silva
 Digite a idade: 30
 Digite o saldo: 1000.50
 Usuario cadastrado com sucesso.
-Usuario: João Silva
-ID: 1
-Saldo: 1000.500000
 ```
 
-## 📁 Armazenamento
+---
 
-Os dados dos usuários são armazenados no arquivo `dados.txt` no seguinte formato:
+## 📁 Formato do Arquivo `dados.txt`
+
+Os dados são armazenados no formato CSV:
+
 ```
 1, João da Silva, 30, 1000.00
 2, Maria Souza, 25, 500.50
 ```
 
+---
+
 ## 🛠️ Funções principais
 
-- `novo_usuario`: cadastra um novo usuário
-- `ler_arquivo`: carrega os dados do arquivo para a memória
-- `reescrever_arquivo`: sobrescreve o arquivo com os dados atuais
-- `buscar_id`: busca usuário por ID
-- `deletar_usuario`: remove usuário
-- `encontrar_indice_por_id`: auxilia a localizar índices no vetor
-- `ler_inteiro` / `ler_float`: fazem validação segura da entrada do usuário
+- `novo_usuario` → Cadastra um novo usuário  
+- `ler_arquivo` → Carrega dados do arquivo para a memória  
+- `reescrever_arquivo` → Atualiza o arquivo com os dados atuais  
+- `buscar_id` → Busca um usuário pelo ID  
+- `deletar_usuario` → Remove um usuário  
+- `realizar_transferencia` → Faz a transferência de saldo entre contas  
+- `ler_inteiro` / `ler_float` → Leitura segura de entrada do usuário  
 
-## 🧹 TODO (possíveis melhorias)
+---
 
-- Implementar autenticação de usuário
-- Criar interface gráfica (usando GTK, por exemplo)
-- Adicionar operações como depósito e saque
-- Exportar dados em CSV ou JSON
+## 🚧 TODO (Melhorias futuras)
+
+- 🔐 Implementar autenticação de usuários  
+- 🖥️ Criar interface gráfica (ex: com GTK ou integração via Python)  
+- ➕ Adicionar funcionalidades de depósito e saque  
+- 📤 Exportar dados para formatos como CSV ou JSON  
+
+---
 
 ## 👤 Autor
 
 Desenvolvido por [@rduarte12](https://github.com/rduarte12)
+
+---
+
+💡 Projeto feito para fins de aprendizado em C e gerenciamento de arquivos.
