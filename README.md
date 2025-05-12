@@ -94,4 +94,4 @@ Os dados dos usuários são armazenados no arquivo `dados.txt` no seguinte forma
 
 ## 👤 Autor
 
-**Rafael Duarte**
+Desenvolvido por [@rduarte12](https://github.com/rduarte12)
