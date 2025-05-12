@@ -39,6 +39,9 @@ int ler_inteiro() {
 }
 
 // Função para ler e validar um número de ponto flutuante positivo digitado pelo usuário
+// Function prototype for reescrever_arquivo
+int reescrever_arquivo(Usuarios **usuario, int *total_usuarios);
+
 float ler_float() {
     char str[1000];
     int valido;
@@ -179,8 +182,7 @@ int buscar_id(Usuarios **usuario, int id_busca, int *total_usuarios) {
 }
 
 // Remove um usuário com base no ID
-int deletar_usuario(Usuarios **usuario, int *id_global, int id_busca, int *total_usuarios) {
-    ler_arquivo(usuario, id_global, total_usuarios);
+int deletar_usuario(Usuarios **usuario, int id_busca, int *total_usuarios) {
     int encontrado = 0;
     for (int i = 0; i < *total_usuarios; i++) {
         if ((*usuario)[i].id == id_busca) {
@@ -189,6 +191,14 @@ int deletar_usuario(Usuarios **usuario, int *id_global, int id_busca, int *total
                 (*usuario)[j] = (*usuario)[j + 1];
             }
             (*total_usuarios)--;
+            *usuario = realloc(*usuario, (*total_usuarios) * sizeof(Usuarios));
+            if (*total_usuarios > 0 && *usuario == NULL) {
+                printf("Erro ao realocar memoria.\n");
+                return 1;
+            }
+            if (reescrever_arquivo(usuario, total_usuarios) != 0) {
+                return 1;
+            }
             break;
         }
     }
@@ -224,6 +234,32 @@ int encontrar_indice_por_id(Usuarios *usuario, int total_usuarios, int id_procur
     return -1;
 }
 
+// Realiza a transferência entre dois usuários
+int realizar_transferencia(Usuarios **usuario, int total_usuarios, int id_origem, int id_destino, float valor) {
+    int i_origem = -1, i_destino = -1;
+    for (int i = 0; i < total_usuarios; i++) {
+        if ((*usuario)[i].id == id_origem) i_origem = i;
+        if ((*usuario)[i].id == id_destino) i_destino = i;
+    }
+
+    if (i_origem == -1 || i_destino == -1) {
+        printf("ID(s) invalido(s).\n");
+        return 1;
+    }
+
+    if ((*usuario)[i_origem].saldo < valor) {
+        printf("Saldo insuficiente.\n");
+        return 1;
+    }
+
+    (*usuario)[i_origem].saldo -= valor;
+    (*usuario)[i_destino].saldo += valor;
+    if (reescrever_arquivo(usuario, &total_usuarios) != 0) {
+        return 1;
+    }
+    return 0;
+}
+
 // Função principal: apresenta menu e controla as operações
 int main() {
     Usuarios *usuario = NULL;
@@ -257,12 +293,14 @@ int main() {
                 int num_usuarios;
                 printf("Quantos usuarios deseja inserir? ");
                 num_usuarios = ler_inteiro();
-                for (int i = 0; i < num_usuarios; i++) {
+                for (int i = 0; i < num_usuarios; i++) 
+                {
                     printf("\nInserindo usuario %d de %d\n", i + 1, num_usuarios);
                     novo_usuario(&usuario, &id_global, &total_usuarios);
                 }
                 break;
             }
+            
             case 3: {
                 int id_busca;
                 printf("Digite o ID do usuario: ");
@@ -270,52 +308,41 @@ int main() {
                 buscar_id(&usuario, id_busca, &total_usuarios);
                 break;
             }
-            case 4: {
-                int id_origem, id_destino;
-                float valor_transferencia;
-
+            
+            case 4: 
                 printf("ID do usuario de origem: ");
-                id_origem = ler_inteiro();
-
+                int id_origem = ler_inteiro();
                 printf("ID do usuario de destino: ");
-                id_destino = ler_inteiro();
-
+                int id_destino = ler_inteiro();
                 printf("Valor da transferencia: ");
-                valor_transferencia = ler_float();
+                float valor_transferencia = ler_float();
 
-                int i_origem = encontrar_indice_por_id(usuario, total_usuarios, id_origem);
-                int i_destino = encontrar_indice_por_id(usuario, total_usuarios, id_destino);
-
-                if (i_origem == -1 || i_destino == -1) {
-                    printf("ID(s) invalido(s).\n");
-                    break;
-                }
-
-                if (usuario[i_origem].saldo < valor_transferencia) {
-                    printf("Saldo insuficiente.\n");
-                } else {
-                    usuario[i_origem].saldo -= valor_transferencia;
-                    usuario[i_destino].saldo += valor_transferencia;
-                    reescrever_arquivo(&usuario, &total_usuarios);
+                if (realizar_transferencia(&usuario, total_usuarios, id_origem, id_destino, valor_transferencia) != 0) 
+                {
+                    printf("Erro na transferencia.\n");
+                } 
+                else 
+                {
                     printf("Transferencia realizada com sucesso.\n");
                 }
                 break;
-            }
-            case 5: {
-                int id_remover;
+        
+            case 5: 
                 printf("Digite o ID do usuario a remover: ");
-                id_remover = ler_inteiro();
-
-                if (deletar_usuario(&usuario, &id_global, id_remover, &total_usuarios)) {
-                    reescrever_arquivo(&usuario, &total_usuarios);
+                int id_remover = ler_inteiro();
+                if (deletar_usuario(&usuario, id_remover, &total_usuarios) != 0) 
+                {
                     printf("Usuario removido com sucesso.\n");
-                } else {
+                } 
+                else 
+                {
                     printf("ID nao encontrado.\n");
                 }
                 break;
-            }
+            
             case 6:
-                for (int i = 0; i < total_usuarios; i++) {
+                for (int i = 0; i < total_usuarios; i++) 
+                {
                     printf("ID: %d | Nome: %s | Idade: %d | Saldo: %.2f\n",
                            usuario[i].id,
                            usuario[i].nome,
