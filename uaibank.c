@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h> 
 
 // Variável global usada para exibir ou não mensagens de depuração
 int debug = 0;
@@ -12,6 +13,30 @@ typedef struct {
     int idade;
     float saldo;
 } Usuarios;
+
+// função para escrever uaibank de forma mais bonita e estilizada e moderna utilizando caracteres especiais
+void escrever_uai_bank() {
+    const char *texto[]= {" ___   ___      ___      ___ _______     ___      __     __ ___   ____  ",
+                            "|   | |   |    /   \\    |   |   __  \\   /   \\    |  \\   |  |   | /   /  ",                       
+                            "|   | |   |   /  ^  \\   |   |  |__| /  /  ^  \\   |   \\  |  |   |/   /   ",                         
+                            "|   | |   |  /  /_\\  \\  |   |   __ <  /  /_\\  \\  |    \\ |  |       <    ",                               
+                            "|   |_|   | /  _____  \\ |   |  |__| \\/  _____  \\ |  |\\ \\|  |   |\\   \\   ",                      
+                            "|_________|/__/     \\__\\|___|_______/__/     \\__\\|__| \\____|___| \\___\\  "};                           
+
+    printf("\033[1;34m"); // Cor azul
+    for (int i = 0; i < sizeof(texto)/sizeof(texto[0]); i++) {
+        printf("%s\n", texto[i]);
+        fflush(stdout);
+        usleep(100000); // Pausa de 100 milissegundos
+    }
+    printf("\033[0m\n"); // Resetar cor
+}
+
+
+
+
+
+
 
 // Função para ler e validar um número inteiro positivo digitado pelo usuário
 int ler_inteiro() {
@@ -100,10 +125,55 @@ int novo_usuario(Usuarios **usuario, int *id_global, int *total_usuarios) {
     char nome[101];
     int idade;
     float saldo;
+    const char* caracteres_permitidos = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ";
+    int flag = 0;
 
-    printf("Digite o nome: ");
-    scanf(" %[^\n]", nome);
-    getchar(); // Limpa o buffer
+    do {
+        printf("Digite o nome: ");
+        scanf(" %[^\n]", nome);
+        getchar(); // Limpa o buffer
+
+        //Elimina espaços extras no início e no final do nome
+
+        if (nome[strlen(nome) - 1] == ' ') {
+            for (int i = (strlen(nome) - 1); nome[i] == ' '; i--) {
+            nome[i] = "";
+            }
+        }
+
+        if (nome[0] == ' ') {
+            for (int i = 0; nome[i] == ' '; i++) {
+                nome[i] = "";
+            }
+        }
+
+        // Elimina espaços extras no meio do nome
+        for (int i = 0; i < strlen(nome) - 1; i++) {
+            if (nome[i] == ' ' && nome[i + 1] == ' ') {
+                for (int j = i + 1; j < strlen(nome); j++) {
+                    nome[j] = nome[j + 1];
+                }
+                i--;
+            }
+        }
+
+        for (int i = 0; i < strlen(nome); ++i) {
+            if (strchr(caracteres_permitidos, nome[i]) == NULL) {
+                printf("Caracter Invalido! Utilize apenas letras\n");
+                flag = 0;
+                break;
+            }
+            else {
+                flag = 1;
+            }
+        }
+
+        
+
+
+    } while (!flag);
+    
+    
 
     printf("Digite a idade: ");
     idade = ler_inteiro();
@@ -270,6 +340,8 @@ int main() {
 
     int var_loop = 1;
 
+    escrever_uai_bank();
+
     while (var_loop) {
         printf("\n======== UaiBank ========\n");
         printf("1 - Inserir usuario\n");
@@ -278,6 +350,7 @@ int main() {
         printf("4 - Realizar transferencia\n");
         printf("5 - Remover usuario por ID\n");
         printf("6 - Listar usuarios\n");
+        printf("7 - Limpar Tela\n");
         printf("0 - Sair\n");
         printf("=========================\n");
         printf("Escolha uma opcao: ");
@@ -350,6 +423,12 @@ int main() {
                            usuario[i].saldo);
                 }
                 break;
+            
+            case 7: 
+                system("cls");
+                escrever_uai_bank();
+                break;
+
             case 0:
                 var_loop = 0;
                 break;
