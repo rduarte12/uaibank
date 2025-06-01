@@ -6,7 +6,13 @@
 // Variável global usada para exibir ou não mensagens de depuração
 int debug = 0;
 
-// Estrutura que representa um usuário do sistema bancário
+/**
+ * Estrutura que representa um usuário do sistema bancário.
+ * @param id    Identificador único do usuário.
+ * @param nome  Nome do usuário (até 100 caracteres).
+ * @param idade Idade do usuário.
+ * @param saldo Saldo da conta do usuário.
+ */
 typedef struct {
     int id;
     char nome[101];
@@ -14,7 +20,10 @@ typedef struct {
     float saldo;
 } Usuarios;
 
-// função para escrever uaibank de forma mais bonita e estilizada e moderna utilizando caracteres especiais
+/**
+ * Exibe o nome "UaiBank" de forma estilizada no terminal.
+ * Não recebe parâmetros nem retorna valores.
+ */
 void escrever_uai_bank() {
     const char *texto[]= {" ___   ___      ___      ___ _______     ___      __     __ ___   ____  ",
                             "|   | |   |    /   \\    |   |   __  \\   /   \\    |  \\   |  |   | /   /  ",                       
@@ -32,13 +41,11 @@ void escrever_uai_bank() {
     printf("\033[0m\n"); // Resetar cor
 }
 
-
-
-
-
-
-
-// Função para ler e validar um número inteiro positivo digitado pelo usuário
+/**
+ * Lê um número inteiro positivo digitado pelo usuário.
+ * Faz validação para garantir que apenas dígitos foram inseridos.
+ * @return Valor inteiro lido.
+ */
 int ler_inteiro() {
     int valor;
     char str[1000];
@@ -63,10 +70,11 @@ int ler_inteiro() {
     return valor;
 }
 
-// Função para ler e validar um número de ponto flutuante positivo digitado pelo usuário
-// Function prototype for reescrever_arquivo
-int reescrever_arquivo(Usuarios **usuario, int *total_usuarios);
-
+/**
+ * Lê um número de ponto flutuante positivo digitado pelo usuário.
+ * Faz validação para garantir formato correto e valor não-negativo.
+ * @return Valor float lido.
+ */
 float ler_float() {
     char str[1000];
     int valido;
@@ -103,24 +111,43 @@ float ler_float() {
     return valor;
 }
 
-// Salva os dados do novo usuário no arquivo
+/**
+ * Salva os dados do novo usuário no arquivo "dados.txt" e o ID em "log.txt".
+ * @param usuario         Ponteiro para o vetor de usuários.
+ * @param total_usuarios  Ponteiro para o total de usuários cadastrados.
+ * @return 0 em caso de sucesso, 1 em caso de erro.
+ */
 int atualizar_arquivo(Usuarios **usuario, int *total_usuarios) {
     FILE *arquivo = fopen("dados.txt", "a");
+    FILE *arquivo2 = fopen("log.txt", "a");
+    if (arquivo2 == NULL) {
+        printf("Erro ao abrir o arquivo de log.\n");
+        return 1;
+    }
+
     if (arquivo == NULL) {
         printf("Erro ao abrir o arquivo.\n");
         return 1;
     }
 
-    fprintf(arquivo, "%d, %s, %d, %.2f\n",
-            (*usuario)[*total_usuarios].id,
+    fprintf(arquivo2, "ID: %d\n", (*usuario)[*total_usuarios].id);
+
+    fprintf(arquivo,"%s, %d, %.2f\n",
             (*usuario)[*total_usuarios].nome,
             (*usuario)[*total_usuarios].idade,
             (*usuario)[*total_usuarios].saldo);
     fclose(arquivo);
+    fclose(arquivo2);
     return 0;
 }
 
-// Cria um novo usuário e armazena em memória e no arquivo
+/**
+ * Cria um novo usuário, faz validações, armazena em memória e salva no arquivo.
+ * @param usuario     Ponteiro para o vetor de usuários.
+ * @param id_global   Ponteiro para o ID global (incrementado a cada novo usuário).
+ * @param total_usuarios Ponteiro para o total de usuários cadastrados.
+ * @return 0 em caso de sucesso, 1 em caso de erro.
+ */
 int novo_usuario(Usuarios **usuario, int *id_global, int *total_usuarios) {
     char nome[101];
     int idade;
@@ -204,13 +231,22 @@ int novo_usuario(Usuarios **usuario, int *id_global, int *total_usuarios) {
     return 0;
 }
 
-// Lê os dados do arquivo para preencher os usuários na memória
+/**
+ * Lê os dados dos arquivos "dados.txt" e "log.txt" para preencher os usuários na memória.
+ * Atualiza o id_global e o total de usuários.
+ * @param usuario         Ponteiro para o vetor de usuários.
+ * @param id_global       Ponteiro para o ID global.
+ * @param total_usuarios  Ponteiro para o total de usuários.
+ * @return 0 em caso de sucesso, 1 em caso de erro.
+ */
 int ler_arquivo(Usuarios **usuario, int *id_global, int *total_usuarios) {
     *id_global = 0;
     *total_usuarios = 0;
 
     FILE *arquivo = fopen("dados.txt", "r");
-    if (arquivo != NULL) {
+    FILE *arquivo2 = fopen("log.txt", "r");
+
+    if (arquivo != NULL && arquivo2 != NULL) {
         char linha[256];
         while (fgets(linha, sizeof(linha), arquivo) != NULL) {
             *usuario = realloc(*usuario, (*total_usuarios + 1) * sizeof(Usuarios));
@@ -220,11 +256,14 @@ int ler_arquivo(Usuarios **usuario, int *id_global, int *total_usuarios) {
                 return 1;
             }
 
-            sscanf(linha, "%d, %100[^,], %d, %f",
-                   &(*usuario)[*total_usuarios].id,
+            sscanf(linha, "%100[^,], %d, %f",
+                   
                    (*usuario)[*total_usuarios].nome,
                    &(*usuario)[*total_usuarios].idade,
                    &(*usuario)[*total_usuarios].saldo);
+            
+            fgets(linha, sizeof(linha), arquivo2);
+            sscanf(linha, "ID: %d", &(*usuario)[*total_usuarios].id);
 
             if ((*usuario)[*total_usuarios].id > *id_global)
                 *id_global = (*usuario)[*total_usuarios].id;
@@ -232,11 +271,18 @@ int ler_arquivo(Usuarios **usuario, int *id_global, int *total_usuarios) {
             (*total_usuarios)++;
         }
         fclose(arquivo);
+        fclose(arquivo2);
     }
     return 0;
 }
 
-// Busca um usuário pelo ID
+/**
+ * Busca um usuário pelo ID e exibe suas informações.
+ * @param usuario         Ponteiro para o vetor de usuários.
+ * @param id_busca        ID a ser buscado.
+ * @param total_usuarios  Ponteiro para o total de usuários.
+ * @return 0 se encontrado, 1 se não encontrado.
+ */
 int buscar_id(Usuarios **usuario, int id_busca, int *total_usuarios) {
     for (int i = 0; i < *total_usuarios; i++) {
         if ((*usuario)[i].id == id_busca) {
@@ -251,7 +297,13 @@ int buscar_id(Usuarios **usuario, int id_busca, int *total_usuarios) {
     return 1;
 }
 
-// Remove um usuário com base no ID
+/**
+ * Remove um usuário com base no ID, realoca o vetor e reescreve o arquivo.
+ * @param usuario         Ponteiro para o vetor de usuários.
+ * @param id_busca        ID do usuário a ser removido.
+ * @param total_usuarios  Ponteiro para o total de usuários.
+ * @return 1 se encontrado e removido, 0 se não encontrado.
+ */
 int deletar_usuario(Usuarios **usuario, int id_busca, int *total_usuarios) {
     int encontrado = 0;
     for (int i = 0; i < *total_usuarios; i++) {
@@ -275,27 +327,48 @@ int deletar_usuario(Usuarios **usuario, int id_busca, int *total_usuarios) {
     return encontrado;
 }
 
-// Reescreve todo o arquivo com os dados atualizados
+/**
+ * Reescreve todo o arquivo "dados.txt" e "log.txt" com os dados atualizados dos usuários.
+ * @param usuario         Ponteiro para o vetor de usuários.
+ * @param total_usuarios  Ponteiro para o total de usuários.
+ * @return 0 em caso de sucesso, 1 em caso de erro.
+ */
 int reescrever_arquivo(Usuarios **usuario, int *total_usuarios) {
     FILE *arquivo = fopen("dados.txt", "w");
+    FILE *arquivo2 = fopen("log.txt", "w");
+
+    if (arquivo2 == NULL) {
+        printf("Erro ao abrir o arquivo de log.\n");
+        return 1;
+    }
+
     if (arquivo == NULL) {
         printf("Erro ao abrir o arquivo.\n");
         return 1;
     }
 
     for (int i = 0; i < *total_usuarios; i++) {
-        fprintf(arquivo, "%d, %s, %d, %.2f\n",
-                (*usuario)[i].id,
+        fprintf(arquivo, "%s, %d, %.2f\n",
+                
                 (*usuario)[i].nome,
                 (*usuario)[i].idade,
                 (*usuario)[i].saldo);
+        fprintf(arquivo2, "ID: %d \n", (*usuario)[i].id);
     }
 
+
     fclose(arquivo);
+    fclose(arquivo2);
     return 0;
 }
 
-// Encontra o índice no vetor com base no ID
+/**
+ * Encontra o índice de um usuário no vetor com base no ID.
+ * @param usuario         Vetor de usuários.
+ * @param total_usuarios  Total de usuários.
+ * @param id_procurado    ID a ser procurado.
+ * @return Índice do usuário se encontrado, -1 caso contrário.
+ */
 int encontrar_indice_por_id(Usuarios *usuario, int total_usuarios, int id_procurado) {
     for (int i = 0; i < total_usuarios; i++) {
         if (usuario[i].id == id_procurado)
@@ -304,7 +377,15 @@ int encontrar_indice_por_id(Usuarios *usuario, int total_usuarios, int id_procur
     return -1;
 }
 
-// Realiza a transferência entre dois usuários
+/**
+ * Realiza transferência de saldo entre dois usuários.
+ * @param usuario         Ponteiro para o vetor de usuários.
+ * @param total_usuarios  Total de usuários.
+ * @param id_origem       ID do usuário de origem.
+ * @param id_destino      ID do usuário de destino.
+ * @param valor           Valor a ser transferido.
+ * @return 0 em caso de sucesso, 1 em caso de erro.
+ */
 int realizar_transferencia(Usuarios **usuario, int total_usuarios, int id_origem, int id_destino, float valor) {
     int i_origem = -1, i_destino = -1;
     for (int i = 0; i < total_usuarios; i++) {
@@ -330,7 +411,11 @@ int realizar_transferencia(Usuarios **usuario, int total_usuarios, int id_origem
     return 0;
 }
 
-// Função principal: apresenta menu e controla as operações
+/**
+ * Função principal do programa.
+ * Apresenta o menu, controla as operações e gerencia o ciclo de vida do sistema bancário.
+ * @return 0 ao finalizar o programa.
+ */
 int main() {
     Usuarios *usuario = NULL;
     int id_global = 0;
