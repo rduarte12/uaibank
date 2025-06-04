@@ -94,7 +94,7 @@ flowchart TD
     A[Início novo_usuario] --> B[Solicita nome, idade e saldo]
     B --> C[Valida dados]
     C -- Inválido --> B
-    C -- Válido --> D[Realoca vetor de usuários (realloc)]
+    C -- Válido --> D[Realoca vetor de usuários com realloc]
     D --> E[Adiciona novo usuário ao vetor]
     E --> F[Chama atualizar_arquivo]
     F --> G[Incrementa total de usuários]
@@ -110,7 +110,7 @@ flowchart TD
     A[Início deletar_usuario] --> B[Busca usuário pelo ID]
     B -- Não encontrado --> C[Retorna erro]
     B -- Encontrado --> D[Remove usuário do vetor]
-    D --> E[Realoca vetor de usuários (realloc)]
+    D --> E[Realoca vetor de usuários com realloc]
     E --> F[Chama reescrever_arquivo]
     F --> G[Decrementa total de usuários]
     G --> H[Fim]
@@ -139,7 +139,7 @@ flowchart TD
 flowchart TD
     A[Início ler_arquivo] --> B[Abre arquivos de dados e log]
     B --> C[Lê cada linha dos arquivos]
-    C --> D[Realoca vetor de usuários (realloc) se necessário]
+    C --> D[Realoca vetor de usuários com realloc se necessário]
     D --> E[Preenche vetor de usuários]
     E --> F[Atualiza id_global e total_usuarios]
     F --> G[Fim]
