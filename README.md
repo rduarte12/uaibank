@@ -87,6 +87,69 @@ flowchart TD
 
 ---
 
+## Fluxograma da Função novo_usuario
+
+```mermaid
+flowchart TD
+    A[Início novo_usuario] --> B[Solicita nome, idade e saldo]
+    B --> C[Valida dados]
+    C -- Inválido --> B
+    C -- Válido --> D[Realoca vetor de usuários (realloc)]
+    D --> E[Adiciona novo usuário ao vetor]
+    E --> F[Chama atualizar_arquivo]
+    F --> G[Incrementa total de usuários]
+    G --> H[Fim]
+```
+
+---
+
+## Fluxograma da Função deletar_usuario
+
+```mermaid
+flowchart TD
+    A[Início deletar_usuario] --> B[Busca usuário pelo ID]
+    B -- Não encontrado --> C[Retorna erro]
+    B -- Encontrado --> D[Remove usuário do vetor]
+    D --> E[Realoca vetor de usuários (realloc)]
+    E --> F[Chama reescrever_arquivo]
+    F --> G[Decrementa total de usuários]
+    G --> H[Fim]
+```
+
+---
+
+## Fluxograma da Função realizar_transferencia
+
+```mermaid
+flowchart TD
+    A[Início realizar_transferencia] --> B[Solicita IDs e valor]
+    B --> C[Valida IDs e saldo]
+    C -- Inválido --> D[Retorna erro]
+    C -- Válido --> E[Debita valor do usuário origem]
+    E --> F[Credita valor no usuário destino]
+    F --> G[Chama reescrever_arquivo]
+    G --> H[Fim]
+```
+
+---
+
+## Fluxograma da Função ler_arquivo
+
+```mermaid
+flowchart TD
+    A[Início ler_arquivo] --> B[Abre arquivos de dados e log]
+    B --> C[Lê cada linha dos arquivos]
+    C --> D[Realoca vetor de usuários (realloc) se necessário]
+    D --> E[Preenche vetor de usuários]
+    E --> F[Atualiza id_global e total_usuarios]
+    F --> G[Fim]
+```
+
+---
+
+
+---
+
 ## Estrutura dos Dados
 
 ```c
