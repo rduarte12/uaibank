@@ -48,20 +48,20 @@ O **UaiBank** é um sistema de terminal que permite gerenciar usuários bancári
 
 ```mermaid
 flowchart TD
-    A[Início do Programa] --> B[Lê dados dos arquivos<br/>(ler_arquivo)]
-    B --> C[Exibe logo UaiBank<br/>(escrever_uai_bank)]
+    A[Início do Programa] --> B[Ler dados dos arquivos (ler_arquivo)]
+    B --> C[Exibir logo (escrever_uai_bank)]
     C --> D[Menu Principal]
-    D -->|1| E[Inserir usuário<br/>(novo_usuario)]
-    D -->|2| F[Inserir vários usuários<br/>(novo_usuario em loop)]
-    D -->|3| G[Buscar usuário por ID<br/>(buscar_id)]
-    D -->|4| H[Transferir saldo<br/>(realizar_transferencia)]
-    D -->|5| I[Remover usuário<br/>(deletar_usuario)]
+    D -->|1| E[Inserir usuário (novo_usuario)]
+    D -->|2| F[Inserir vários usuários (loop novo_usuario)]
+    D -->|3| G[Buscar usuário por ID (buscar_id)]
+    D -->|4| H[Transferir saldo (realizar_transferencia)]
+    D -->|5| I[Remover usuário (deletar_usuario)]
     D -->|6| J[Listar usuários]
     D -->|7| K[Limpar tela]
     D -->|0| L[Fim]
-    E --> M[Salva no arquivo<br/>(atualizar_arquivo)]
+    E --> M[Salvar no arquivo (atualizar_arquivo)]
     F --> M
-    I --> N[Reescreve arquivos<br/>(reescrever_arquivo)]
+    I --> N[Reescrever arquivos (reescrever_arquivo)]
     H --> N
     E --> D
     F --> D
