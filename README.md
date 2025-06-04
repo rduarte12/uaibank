@@ -48,17 +48,21 @@ O **UaiBank** é um sistema de terminal que permite gerenciar usuários bancári
 
 ```mermaid
 flowchart TD
-    A[Início do Programa] --> B[Lê dados dos arquivos]
-    B --> C[Exibe logo UaiBank]
+    A[Início do Programa] --> B[Lê dados dos arquivos<br/>(ler_arquivo)]
+    B --> C[Exibe logo UaiBank<br/>(escrever_uai_bank)]
     C --> D[Menu Principal]
-    D -->|1| E[Inserir usuário]
-    D -->|2| F[Inserir vários usuários]
-    D -->|3| G[Buscar usuário por ID]
-    D -->|4| H[Transferir saldo]
-    D -->|5| I[Remover usuário]
+    D -->|1| E[Inserir usuário<br/>(novo_usuario)]
+    D -->|2| F[Inserir vários usuários<br/>(novo_usuario em loop)]
+    D -->|3| G[Buscar usuário por ID<br/>(buscar_id)]
+    D -->|4| H[Transferir saldo<br/>(realizar_transferencia)]
+    D -->|5| I[Remover usuário<br/>(deletar_usuario)]
     D -->|6| J[Listar usuários]
     D -->|7| K[Limpar tela]
     D -->|0| L[Fim]
+    E --> M[Salva no arquivo<br/>(atualizar_arquivo)]
+    F --> M
+    I --> N[Reescreve arquivos<br/>(reescrever_arquivo)]
+    H --> N
     E --> D
     F --> D
     G --> D
@@ -67,6 +71,19 @@ flowchart TD
     J --> D
     K --> D
 ```
+
+**O que cada função faz no fluxograma:**
+
+- **ler_arquivo:** Lê os dados dos arquivos e preenche o vetor de usuários em memória, utilizando ponteiros e realocação dinâmica (`realloc`) para ajustar o tamanho do vetor conforme a quantidade de usuários.
+- **escrever_uai_bank:** Exibe o logo animado do sistema.
+- **novo_usuario:** Solicita dados do usuário, valida, armazena no vetor (com realocação dinâmica usando ponteiros) e chama `atualizar_arquivo` para persistir.
+- **atualizar_arquivo:** Salva os dados do novo usuário nos arquivos de texto.
+- **buscar_id:** Busca e exibe um usuário pelo ID, percorrendo o vetor de usuários via ponteiro.
+- **realizar_transferencia:** Transfere saldo entre dois usuários, atualizando o vetor em memória e persistindo as alterações com `reescrever_arquivo`.
+- **deletar_usuario:** Remove um usuário do vetor (realocando a memória com ponteiros) e reescreve os arquivos.
+- **reescrever_arquivo:** Atualiza completamente os arquivos de dados e log com o vetor atual de usuários.
+- **Listar usuários:** Percorre o vetor de usuários e exibe todos os dados.
+- **Limpar tela:** Limpa o terminal e reexibe o logo.
 
 ---
 
@@ -81,22 +98,27 @@ typedef struct {
 } Usuarios;
 ```
 
+O vetor de usuários é manipulado por ponteiros e realocado dinamicamente com `realloc` a cada inclusão ou exclusão, permitindo flexibilidade e uso eficiente de memória.
+
 ---
 
 ## Funcionalidades
 
-| Função                    | Responsabilidade principal                                  |
-|---------------------------|------------------------------------------------------------|
-| `main`                    | Fluxo principal, menu e controle do sistema                |
-| `escrever_uai_bank`       | Exibe o logo animado                                       |
-| `ler_inteiro`/`ler_float` | Lê e valida entradas numéricas                             |
-| `novo_usuario`            | Cadastro de novo usuário                                   |
-| `atualizar_arquivo`       | Salva novo usuário nos arquivos                            |
-| `ler_arquivo`             | Carrega usuários dos arquivos                              |
-| `buscar_id`               | Busca usuário pelo ID                                      |
-| `deletar_usuario`         | Remove usuário pelo ID                                     |
-| `reescrever_arquivo`      | Atualiza arquivos após remoção/transferência               |
-| `realizar_transferencia`  | Transfere saldo entre usuários                             |
+| Função                    | Responsabilidade principal                                                                                 | Uso de ponteiros e realocação dinâmica                |
+|---------------------------|-----------------------------------------------------------------------------------------------------------|-------------------------------------------------------|
+| `main`                    | Fluxo principal, menu e controle do sistema                                                               | Manipula ponteiros para o vetor de usuários           |
+| `escrever_uai_bank`       | Exibe o logo animado                                                                                      | -                                                     |
+| `ler_inteiro`/`ler_float` | Lê e valida entradas numéricas                                                                            | -                                                     |
+| `novo_usuario`            | Cadastro de novo usuário, valida dados, realoca vetor com `realloc` e atualiza ponteiros                  | Sim                                                   |
+| `atualizar_arquivo`       | Salva novo usuário nos arquivos                                                                           | Recebe ponteiro para vetor                            |
+| `ler_arquivo`             | Carrega usuários dos arquivos, realocando vetor conforme necessário                                       | Sim                                                   |
+| `buscar_id`               | Busca usuário pelo ID no vetor                                                                            | Recebe ponteiro para vetor                            |
+| `deletar_usuario`         | Remove usuário, realoca vetor com `realloc` e atualiza ponteiros                                          | Sim                                                   |
+| `reescrever_arquivo`      | Atualiza arquivos após remoção/transferência, percorrendo vetor por ponteiro                              | Sim                                                   |
+| `realizar_transferencia`  | Transfere saldo entre usuários, altera vetor em memória e persiste alterações                             | Sim                                                   |
+
+**Observação:**  
+A manipulação do vetor de usuários é feita sempre por ponteiros, permitindo que as funções alterem diretamente o conteúdo e o tamanho do vetor na memória, garantindo flexibilidade e eficiência.
 
 ---
 
