@@ -1,2 +1,3 @@
-rafa dois, 18, 5555.00
-rafa tres, 18, 50500.00
+Rafa Duarte, 89, 32323.00
+teste, 89, 6565.00
+teste dois, 20, 0.00

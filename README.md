@@ -1,23 +1,76 @@
-# UaiBank 💰
+# UaiBank
 
-**UaiBank** é um sistema bancário simples, escrito em linguagem C, que permite gerenciar usuários, realizar transferências entre contas e armazenar dados de forma persistente em arquivo.
-
----
-
-## 📋 Funcionalidades
-
-- ✅ Cadastro de um ou mais usuários  
-- 🔍 Busca de usuário por ID  
-- 🔄 Transferência de saldo entre contas  
-- ❌ Remoção de usuários por ID  
-- 📄 Listagem de todos os usuários  
-- 💾 Armazenamento persistente no arquivo `dados.txt`  
+Sistema bancário simples em C para cadastro, consulta, remoção, listagem e transferência de saldo entre usuários, com persistência em arquivos de texto.
 
 ---
 
-## 📦 Estrutura de Dados
+## Sumário
 
-Os usuários são representados por uma `struct` chamada `Usuarios`, contendo os seguintes campos:
+- [Descrição Geral](#descrição-geral)
+- [Tecnologias Utilizadas](#tecnologias-utilizadas)
+- [Como Funciona](#como-funciona)
+- [Fluxograma do Sistema](#fluxograma-do-sistema)
+- [Estrutura dos Dados](#estrutura-dos-dados)
+- [Funcionalidades](#funcionalidades)
+- [Interação com o Usuário](#interação-com-o-usuário)
+- [Exemplo de Uso](#exemplo-de-uso)
+
+---
+
+## Descrição Geral
+
+O **UaiBank** é um sistema de terminal que permite gerenciar usuários bancários, realizando operações como cadastro, busca, remoção, listagem e transferência de saldo. Os dados são armazenados nos arquivos `dados.txt` (informações dos usuários) e `log.txt` (IDs dos usuários), garantindo persistência entre execuções.
+
+---
+
+## Tecnologias Utilizadas
+
+| Tecnologia/Biblioteca | Onde é utilizada                | Função principal                                  |
+|-----------------------|---------------------------------|---------------------------------------------------|
+| `stdio.h`             | Todo o código                   | Entrada/saída padrão (printf, scanf, fgets, etc.) |
+| `stdlib.h`            | Alocação dinâmica, conversões   | malloc, realloc, atoi, atof                       |
+| `string.h`            | Manipulação de strings          | strlen, strcpy, strchr, etc.                      |
+| `unistd.h`            | Animação do logo                | usleep para pausar a exibição do texto            |
+| Sistema de arquivos   | Funções de leitura/escrita      | Persistência dos dados dos usuários               |
+
+---
+
+## Como Funciona
+
+- **Persistência:** Os dados dos usuários são salvos em arquivos de texto (`dados.txt` e `log.txt`).
+- **Menu interativo:** O usuário interage via terminal, escolhendo opções numéricas.
+- **Validação:** Entradas são validadas para evitar dados inválidos.
+- **Operações:** Cadastro, busca, remoção, listagem e transferência de saldo.
+
+---
+
+## Fluxograma do Sistema
+
+```mermaid
+flowchart TD
+    A[Início do Programa] --> B[Lê dados dos arquivos]
+    B --> C[Exibe logo UaiBank]
+    C --> D[Menu Principal]
+    D -->|1| E[Inserir usuário]
+    D -->|2| F[Inserir vários usuários]
+    D -->|3| G[Buscar usuário por ID]
+    D -->|4| H[Transferir saldo]
+    D -->|5| I[Remover usuário]
+    D -->|6| J[Listar usuários]
+    D -->|7| K[Limpar tela]
+    D -->|0| L[Fim]
+    E --> D
+    F --> D
+    G --> D
+    H --> D
+    I --> D
+    J --> D
+    K --> D
+```
+
+---
+
+## Estrutura dos Dados
 
 ```c
 typedef struct {
@@ -30,25 +83,28 @@ typedef struct {
 
 ---
 
-## 🔧 Compilação e Execução
+## Funcionalidades
 
-1. Compile o código com o `gcc`:
-   ```bash
-   gcc -o uaibank uaibank.c
-   ```
-
-2. Execute o programa:
-   ```bash
-   ./uaibank
-   ```
-
-> O programa criará um arquivo `dados.txt` na pasta atual, se ele ainda não existir.
+| Função                    | Responsabilidade principal                                  |
+|---------------------------|------------------------------------------------------------|
+| `main`                    | Fluxo principal, menu e controle do sistema                |
+| `escrever_uai_bank`       | Exibe o logo animado                                       |
+| `ler_inteiro`/`ler_float` | Lê e valida entradas numéricas                             |
+| `novo_usuario`            | Cadastro de novo usuário                                   |
+| `atualizar_arquivo`       | Salva novo usuário nos arquivos                            |
+| `ler_arquivo`             | Carrega usuários dos arquivos                              |
+| `buscar_id`               | Busca usuário pelo ID                                      |
+| `deletar_usuario`         | Remove usuário pelo ID                                     |
+| `reescrever_arquivo`      | Atualiza arquivos após remoção/transferência               |
+| `realizar_transferencia`  | Transfere saldo entre usuários                             |
 
 ---
 
-## 🧪 Exemplo de uso
+## Interação com o Usuário
 
-```text
+O usuário interage via terminal, escolhendo opções do menu principal:
+
+```
 ======== UaiBank ========
 1 - Inserir usuario
 2 - Inserir varios usuarios
@@ -56,53 +112,36 @@ typedef struct {
 4 - Realizar transferencia
 5 - Remover usuario por ID
 6 - Listar usuarios
+7 - Limpar Tela
 0 - Sair
 =========================
-Escolha uma opcao: 1
-Digite o nome: João Silva
-Digite a idade: 30
-Digite o saldo: 1000.50
-Usuario cadastrado com sucesso.
+Escolha uma opcao:
 ```
 
----
-
-## 📁 Formato do Arquivo `dados.txt`
-
-Os dados são armazenados no formato CSV:
-
-```
-1, João da Silva, 30, 1000.00
-2, Maria Souza, 25, 500.50
-```
+Cada operação solicita os dados necessários, valida as entradas e informa o sucesso ou erro das operações.
 
 ---
 
-## 🛠️ Funções principais
+## Exemplo de Uso
 
-- `novo_usuario` → Cadastra um novo usuário  
-- `ler_arquivo` → Carrega dados do arquivo para a memória  
-- `reescrever_arquivo` → Atualiza o arquivo com os dados atuais  
-- `buscar_id` → Busca um usuário pelo ID  
-- `deletar_usuario` → Remove um usuário  
-- `realizar_transferencia` → Faz a transferência de saldo entre contas  
-- `ler_inteiro` / `ler_float` → Leitura segura de entrada do usuário  
+1. **Cadastrar usuário:**  
+   Escolha a opção 1, informe nome, idade e saldo inicial.
 
----
+2. **Buscar usuário:**  
+   Opção 3, informe o ID.
 
-## 🚧 TODO (Melhorias futuras)
+3. **Transferir saldo:**  
+   Opção 4, informe ID de origem, ID de destino e valor.
 
-- 🔐 Implementar autenticação de usuários  
-- 🖥️ Criar interface gráfica (ex: com GTK ou integração via Python)  
-- ➕ Adicionar funcionalidades de depósito e saque  
-- 📤 Exportar dados para formatos como CSV ou JSON  
+4. **Remover usuário:**  
+   Opção 5, informe o ID.
+
+5. **Listar usuários:**  
+   Opção 6.
 
 ---
 
-## 👤 Autor
 
-Desenvolvido por [@rduarte12](https://github.com/rduarte12)
 
 ---
 
-💡 Projeto feito para fins de aprendizado em C e gerenciamento de arquivos.
